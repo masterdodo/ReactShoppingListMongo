@@ -8,6 +8,7 @@ class App extends Component {
     name: null,
     intervalIsSet: false,
     idToDelete: null,
+    objIdToDelete: null,
   }
 
   componentWillMount()
@@ -52,22 +53,24 @@ class App extends Component {
   deleteFromDbStart(itemId)
   {
     this.setState({ idToDelete: itemId })
-    this.deleteFromDb(this.state.idToDelete)
+    var deleteid = itemId
+    console.log(deleteid)
+    this.deleteFromDb(deleteid)
   }
 
-  deleteFromDb = idToDelete => {
-    let objIdToDelete = null
+  deleteFromDb(idToDelete)
+  {
+    var objIdToDelete = null
     this.state.data.forEach(dat => {
       if(dat.id === idToDelete)
       {
         objIdToDelete = dat._id
+        this.setState({ objIdToDelete: objIdToDelete })
       }
     })
 
     axios.delete("api/deleteData", {
-      data: {
         id: objIdToDelete
-      }
     })
   }
 
