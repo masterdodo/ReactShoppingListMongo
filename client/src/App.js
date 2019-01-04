@@ -8,7 +8,9 @@ class App extends Component {
     name: null,
     intervalIsSet: false,
     idToDelete: null,
+    idToUpdate: null,
     objIdToDelete: null,
+    objIdToUpdate: null,
   }
 
   componentWillMount()
@@ -50,11 +52,25 @@ class App extends Component {
     })
   }
 
+  updateDB(idToUpdate, updateToApply)
+  {
+    let objIdToUpdate = null;
+    this.state.data.forEach(dat => {
+      if (dat.id === idToUpdate) {
+        objIdToUpdate = dat._id;
+      }
+    });
+
+    axios.post("/api/updateData", {
+      id: objIdToUpdate,
+      update: { message: updateToApply }
+    });
+  };
+
   deleteFromDbStart(itemId)
   {
     this.setState({ idToDelete: itemId })
     var deleteid = itemId
-    console.log(deleteid)
     this.deleteFromDb(deleteid)
   }
 
@@ -69,9 +85,11 @@ class App extends Component {
       }
     })
 
-    axios.delete("api/deleteData", {
+    axios.delete("/api/deleteData", {
+      data: {
         id: objIdToDelete
-    })
+      }
+    });
   }
 
   render() {
@@ -100,19 +118,25 @@ class App extends Component {
                 Create
               </button>
             </div>
-              <ul>
+                <table>
+                <tbody>
                 {data.length <= 0
-                  ? "Nothing!"
+                  ? <tr><td colSpan="3">Nothing!</td></tr>
                   : data.map(dat => (
-                      <li key={dat.id}>
-                        {dat.name}&nbsp;
+                        <tr key={dat.id}>
+                        <td>
+                        • {dat.name}&nbsp;
+                        </td>
+                        <td>
                         <button 
                         className="btn btn-danger center-block" 
                         onClick={() => this.deleteFromDbStart(dat.id)}>
                         Remove</button>
-                      </li>
+                        </td>
+                        </tr>
                     ))}
-              </ul>
+                </tbody>
+                </table>
           </div>
         </div>
       </div>
